@@ -20,24 +20,38 @@ export default function App() {
     }
     return result
   }
-
+  function reRollDice() {
+    setDiceArr(prevDiceArr => prevDiceArr.map(oldDie => {
+      return oldDie.isHeld ? oldDie : 
+      {...oldDie, value: Math.floor(Math.random() * 6 + 1 ),}
+    }))
+  }
+  function holdDie(event) {
+    const id = event.target.id
+    setDiceArr(prevDiceArr => prevDiceArr.map(die => {
+      return die.id == id ? 
+        {...die, isHeld: !die.isHeld} : die
+    }))
+  }
   return (
     <main className='tenzies'>
       <h1 className='title'>Tenzies</h1>
       <p className='description'>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
       <section className="die-grid">
         {
-          diceArr.map((die, idx) => {
+          diceArr.map(die => {
             return <Die
-              key={idx} 
-              id={idx} 
+              key={die.id} 
+              id={die.id} 
               value={die.value}
               isHeld={die.isHeld}
+              holdDie={holdDie}
+              //  holdDice={() => holdDice(die.id)}
             />
           })
         }
       </section>
-      <button onClick={()=>{setDiceArr(rollDice())}}>{gameState}</button>
+      <button onClick={reRollDice}>{gameState}</button>
     </main>
   )
 }

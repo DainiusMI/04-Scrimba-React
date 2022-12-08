@@ -1,11 +1,13 @@
 import React from "react";
 
 export default function GameContainer(props) {
-    console.log(props.isHeld)
     return (
         <div 
-            className="die"
-            style={{backgroundColor: props.isHeld ? "#59E391" : "#FFF"}}
+            id={props.id}
+            className={props.isHeld ? "die active" : "die"}
+            onClick={props.holdDie}
         >{props.value}</div>
     )
 }
+
+//            style={{backgroundColor: props.isHeld ? "#59E391" : "#FFF"}}
