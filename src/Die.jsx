@@ -5,7 +5,7 @@ export default function GameContainer(props) {
         <div 
             id={props.id}
             className={props.isHeld ? "die active" : "die"}
-            onClick={props.holdDie}
+            onClick={props.handleDie}
         >{props.value}</div>
     )
 }
