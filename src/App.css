@@ -14,7 +14,9 @@ body {
 
 #root {
   width: 360px;
-  height: 380px;
+  /* height: 380px; */
+
+  padding: 1rem;
 
   display: flex;
   align-items: center;
@@ -79,4 +81,20 @@ button {
 
 button:active {
   box-shadow: inset 0 0 .5rem #2B283A;
+}
+
+.score-container {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+}
+.score-text {
+  font-size: 12px;
+  font-weight: 400;
+}
+.score-text strong {
+  font-weight: 700;
+  color: red;
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import Die from "./components/Die"
+import Score from './components/Score'
 import './App.css'
 import "./components/dice.css"
 
@@ -9,41 +10,72 @@ export default function App() {
 
   const [diceArr, setDiceArr] = React.useState(rollDice());
 
+  const [gameState, setGamestate] = React.useState({
+    isOver: false, 
+    rollCount: 0,
+    bestScore: null
+  })
 
-  const [tenzie, setTenzie] = React.useState(false)
+
+
 
   React.useEffect(()=>{
     const allHeld = !diceArr.find(die => die.isHeld === false);
     const allMatch = diceArr.every(die => die.value === diceArr[0].value);
 
-    allHeld && allMatch && setTenzie(true);
+    allHeld && allMatch && setGamestate(prevState => {
+      return {
+        ...prevState,
+        isOver: true
+      }
+    });
   }, [diceArr])
 
-  function createNewDie(idx) {
+
+  function generateNewDice(idx) {
     return {
       id: idx,
       value: Math.floor(Math.random() * 6 + 1 ),
       isHeld: false
     }
   }
+
+
   function rollDice() {
     const result = []
     for (let i = 0; i < 10; i++) {
-      result.push(createNewDie(i))
+      result.push(generateNewDice(i))
     }
     return result
   }
+
+
   function handleGame() {
-    if (tenzie) {
+    if (gameState.isOver) {
       setDiceArr(rollDice);
-      setTenzie(false)
+      setGamestate(prevState => {
+        return {
+          isOver: false, 
+          rollCount: 0,
+          bestScore: !prevState.bestScore ? prevState.rollCount :
+            prevState.rollCount < prevState.bestScore ? prevState.rollCount : prevState.bestScore
+        }
+      })
     }
-    else 
-    setDiceArr(prevDiceArr => prevDiceArr.map(oldDie => {
-      return oldDie.isHeld ? oldDie : 
-      createNewDie(oldDie.id)
-    }))
+    else {
+      setDiceArr(prevDiceArr => prevDiceArr.map(oldDie => {
+        return oldDie.isHeld ? oldDie : 
+        generateNewDice(oldDie.id)
+      }))
+      setGamestate(prevState => {
+        return {
+          ...prevState,
+          rollCount: prevState.rollCount + 1
+        }
+      })
+    }
   }
+  
   function handleDie(event) {
     const id = event.target.id
     setDiceArr(prevDiceArr => prevDiceArr.map(die => {
@@ -70,8 +102,14 @@ export default function App() {
           })
         }
       </section>
-      <button onClick={handleGame}>{ tenzie ? "New game" : "Roll" }</button>
-      {tenzie && <Confetti />}
+      <button onClick={handleGame}>{ gameState.isOver ? "New game" : "Roll" }</button>
+
+      <Score 
+        counter={gameState.rollCount}
+        bestScore={gameState.bestScore}
+      />
+
+      {gameState.isOver && <Confetti />}
     </main>
   )
 }
