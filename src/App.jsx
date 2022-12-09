@@ -1,6 +1,7 @@
 import React from 'react'
-import Die from "./Die"
+import Die from "./components/Die"
 import './App.css'
+import "./components/dice.css"
 
 import Confetti from 'react-confetti'
 
@@ -16,7 +17,6 @@ export default function App() {
     const allMatch = diceArr.every(die => die.value === diceArr[0].value);
 
     allHeld && allMatch && setTenzie(true);
-    tenzie && console.log("you have won")
   }, [diceArr])
 
   function createNewDie(idx) {
