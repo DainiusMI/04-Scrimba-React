@@ -2,6 +2,7 @@ import React from 'react'
 import Die from "./Die"
 import './App.css'
 
+import Confetti from 'react-confetti'
 
 export default function App() {
 
@@ -32,7 +33,12 @@ export default function App() {
     }
     return result
   }
-  function reRollDice() {
+  function handleGame() {
+    if (tenzie) {
+      setDiceArr(rollDice);
+      setTenzie(false)
+    }
+    else 
     setDiceArr(prevDiceArr => prevDiceArr.map(oldDie => {
       return oldDie.isHeld ? oldDie : 
       createNewDie(oldDie.id)
@@ -45,6 +51,7 @@ export default function App() {
         {...die, isHeld: !die.isHeld} : die
     }))
   }
+
   return (
     <main className='tenzies'>
       <h1 className='title'>Tenzies</h1>
@@ -63,7 +70,8 @@ export default function App() {
           })
         }
       </section>
-      <button onClick={reRollDice}>{ tenzie ? "Play again" : "Roll" }</button>
+      <button onClick={handleGame}>{ tenzie ? "New game" : "Roll" }</button>
+      {tenzie && <Confetti />}
     </main>
   )
 }
