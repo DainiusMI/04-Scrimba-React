@@ -56,7 +56,7 @@ export default function App() {
     <main className='tenzies'>
       <h1 className='title'>Tenzies</h1>
       <p className='description'>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
-      <section className="die-grid">
+      <section className="dice-grid">
         {
           diceArr.map(die => {
             return <Die
