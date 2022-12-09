@@ -16,7 +16,7 @@ export default function App() {
   const [gameState, setGamestate] = React.useState({
     isOver: false, 
     rollCount: 0,
-    bestScore: null
+    bestScore: JSON.parse(localStorage.getItem("tenzies")) || 0
   })
 
   React.useEffect(()=>{
@@ -25,14 +25,18 @@ export default function App() {
 
     allHeld && allMatch && setGamestate(prevState => {
       return {
-        ...prevState,
         isOver: true,
-        bestScore: prevState.bestScore < prevState.rollCount ? prevState.bestScore : prevState.rollCount
+        rollCount: prevState.rollCount,
+        bestScore: !prevState.bestScore ? prevState.rollCount :
+        prevState.bestScore < prevState.rollCount ? prevState.bestScore : prevState.rollCount
       }
     });
-    gameState.isOver && console.log("game is over: " + gameState.isOver + " from useEffect")
+    gameState.isOver && console.log("game is over: " + gameState.bestScore + " from useEffect")
   }, [diceArr])
 
+  React.useEffect(() => {
+    localStorage.setItem("tenzies", JSON.stringify(gameState.bestScore))
+  }, [gameState.bestScore])
 
   function newDices(idx) {
     return {
@@ -55,7 +59,6 @@ export default function App() {
   function handleGame() {
     // if you have won the game
     if (gameState.isOver) {
-      console.log("game is over: "+ gameState.isOver)
       setGamestate(prevState => {
         return {
           ...prevState,
@@ -64,6 +67,7 @@ export default function App() {
         }
       })
       setDiceArr(rollDices());
+      console.log(diceArr)
     }
     else {
       setDiceArr(prevDiceArr => prevDiceArr.map(oldDie => {
