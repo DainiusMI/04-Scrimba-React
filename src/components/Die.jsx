@@ -1,38 +1,32 @@
 import React from "react";
-import Dots from "./Dots"
+
 
 export default function GameContainer(props) {
-    const {id, value, isHeld, handleDie} = props;
+
 
     const dots = addDots();
     function addDots() {
         const dotIterator = [];
-        for (let i = 0; i < value; i++) {
+        for (let i = 0; i < props.value; i++) {
             dotIterator.push(i+1);
         }
         return dotIterator
     }
     
     function handleClassName() {
-        return isHeld ? `dice-face layout-${value} active` : `dice-face layout-${value}`
+        return props.isHeld ? `dice-face layout-${props.value} active` : `dice-face layout-${props.value}`
     }
 
     return (
         <div 
-            id={id}
+            id={props.id}
             className={handleClassName()}
-            onClick={handleDie}
-        >
+            onClick={props.onClick}>
             {
-                dots.map(dot => (
-                    <span 
-                        key={dot} 
-                        className= "dot"
-                    />
-                ))
+                dots.map(dot => <span key={dot} className= "dot" /> )
             }
         </div>
     )
 }
 
-//            style={{backgroundColor: props.isHeld ? "#59E391" : "#FFF"}}
+//            style={{backgroundColor: props.props.isHeld ? "#59E391" : "#FFF"}}

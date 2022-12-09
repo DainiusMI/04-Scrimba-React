@@ -6,9 +6,12 @@ import "./components/dice.css"
 
 import Confetti from 'react-confetti'
 
+//  selecting dice is bugged seems to trigger the first dice for no reason
+
+
 export default function App() {
 
-  const [diceArr, setDiceArr] = React.useState(rollDice());
+  const [diceArr, setDiceArr] = React.useState(rollDices());
 
   const [gameState, setGamestate] = React.useState({
     isOver: false, 
@@ -16,23 +19,22 @@ export default function App() {
     bestScore: null
   })
 
-
-
-
   React.useEffect(()=>{
-    const allHeld = !diceArr.find(die => die.isHeld === false);
-    const allMatch = diceArr.every(die => die.value === diceArr[0].value);
+    const allHeld = diceArr.every(die => die.isHeld === true);
+    const allMatch = diceArr.every(die => die.value == diceArr[0].value);
 
     allHeld && allMatch && setGamestate(prevState => {
       return {
         ...prevState,
-        isOver: true
+        isOver: true,
+        bestScore: prevState.bestScore < prevState.rollCount ? prevState.bestScore : prevState.rollCount
       }
     });
+    gameState.isOver && console.log("game is over: " + gameState.isOver + " from useEffect")
   }, [diceArr])
 
 
-  function generateNewDice(idx) {
+  function newDices(idx) {
     return {
       id: idx,
       value: Math.floor(Math.random() * 6 + 1 ),
@@ -41,31 +43,32 @@ export default function App() {
   }
 
 
-  function rollDice() {
+  function rollDices() {
     const result = []
     for (let i = 0; i < 10; i++) {
-      result.push(generateNewDice(i))
+      result.push(newDices(i))
     }
     return result
   }
 
 
   function handleGame() {
+    // if you have won the game
     if (gameState.isOver) {
-      setDiceArr(rollDice);
+      console.log("game is over: "+ gameState.isOver)
       setGamestate(prevState => {
         return {
+          ...prevState,
           isOver: false, 
-          rollCount: 0,
-          bestScore: !prevState.bestScore ? prevState.rollCount :
-            prevState.rollCount < prevState.bestScore ? prevState.rollCount : prevState.bestScore
+          rollCount: 0
         }
       })
+      setDiceArr(rollDices());
     }
     else {
       setDiceArr(prevDiceArr => prevDiceArr.map(oldDie => {
         return oldDie.isHeld ? oldDie : 
-        generateNewDice(oldDie.id)
+        newDices(oldDie.id)
       }))
       setGamestate(prevState => {
         return {
@@ -76,11 +79,10 @@ export default function App() {
     }
   }
   
-  function handleDie(event) {
-    const id = event.target.id
-    setDiceArr(prevDiceArr => prevDiceArr.map(die => {
-      return die.id == id ? 
-        {...die, isHeld: !die.isHeld} : die
+  function toggleDice(id) {
+    setDiceArr(prevDiceArr => prevDiceArr.map(dice => {
+      return dice.id === id ? 
+        {...dice, isHeld: !dice.isHeld} : dice
     }))
   }
 
@@ -96,7 +98,7 @@ export default function App() {
               id={die.id} 
               value={die.value}
               isHeld={die.isHeld}
-              handleDie={handleDie}
+              onClick={() => toggleDice(die.id)}
               //  holdDice={() => holdDice(die.id)}
             />
           })
